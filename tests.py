@@ -5,6 +5,8 @@ import email
 import unittest
 import time
 import re
+import mock
+
 from contextlib import contextmanager
 
 from email.header import Header
@@ -19,6 +21,7 @@ class TestCase(unittest.TestCase):
         self.app = Flask(__name__)
         self.app.config.from_object(self)
         self.app.config['FLASH_CENT_SECRET'] = 'flask-cent-test-secret'
+        #self.app.config['FLASH_CENT_SECRET'] = 'development-secret'
 
         self.cent = CentClient(self.app)
 
@@ -58,10 +61,10 @@ class TestUnsubscribe(TestCase):
     def test_command(self):
         self.assertEquals(self.msg.command, 'unsubscribe')
 
-class TestCent(TestCase):
-    def test_send(self):
-        with self.cent.record_messages() as messages:
-            msg = Publish('channel_id', {'key': 'value'})
+#class TestCent(TestCase):
+    #def test_send_publish_message(self):
+        #with self.cent.record_messages() as messages:
+            #msg = Publish('channel_id', {'key': 'value'})
 
-            self.cent.send(msg)
-            self.assertEquals(len(messages), 1)
+            #self.cent.send(msg)
+            #self.assertEquals(len(messages), 1)

@@ -57,8 +57,6 @@ class ClientContext(object):
         if fn is not None:
             err = fn(*message.args)
 
-            print err
-
             if err is None:
                 message_sent.send(message)
             else:

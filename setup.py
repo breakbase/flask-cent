@@ -26,7 +26,17 @@ setup(name='Flask-Cent',
       py_modules=['flask_cent'],
       zip_safe=False,
       platforms='any',
-      install_requires=['Flask'],
+      test_suite='nose.collector',
+      install_requires=[
+          'Flask',
+          'blinker',
+      ],
+      tests_require=[
+          'nose',
+          'blinker',
+          'speaklater',
+          'mock',
+      ],
       classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
