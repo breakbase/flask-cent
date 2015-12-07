@@ -42,6 +42,7 @@ class ClientContext(object):
         messages = []
 
         def record(message, **extras):
+            print message
             messages.append(message)
 
         message_sent.connect(record)
@@ -57,10 +58,10 @@ class ClientContext(object):
         if fn is not None:
             err = fn(*message.args)
 
-            if err is None:
-                message_sent.send(message)
-            else:
+            if isinstance(err, Exception):
                 message_error.send(message)
+            else:
+                message_sent.send(message)
 
 class CentClient(ClientContext):
     def __init__(self, app=None):
