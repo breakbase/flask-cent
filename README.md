@@ -23,5 +23,5 @@ First create a message:
 
 @app.route("/")
 def index():
-    cent.publish("my\_channel\_id", key1='value1', key2='value2')
+    cent.publish("my_channel_id", key1='value1', key2='value2')
 ```
