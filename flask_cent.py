@@ -17,26 +17,6 @@ __all__ = ['CentClient']
 log = logging.getLogger(__name__)
 
 
-class Message(object):
-    def __init__(self, *args):
-        self.args = args
-
-    def command(self):
-        return command
-
-
-class Unsubscribe(Message):
-    command = 'unsubscribe'
-
-
-class Disconnect(Message):
-    command = 'disconnect'
-
-
-class Publish(Message):
-    command = 'publish'
-
-
 class ClientContext(object):
     @contextmanager
     def record_messages(self):
@@ -55,25 +35,25 @@ class ClientContext(object):
         finally:
             message_sent.disconnect(record)
 
-    def publish(self, message):
-        pass
+    def publish(self, channel_id, **kwargs):
+        return self.send('publish', channel_id, kwargs)
 
-    def subscribe(self, message):
-        pass
+    def disconnect(self, user_id):
+        return self.send('disconnect', user_id)
 
-    def unsubscribe(self, message):
-        pass
+    def unsubscribe(self, channel_id):
+        return self.send('unsubscribe', channel_id)
 
-    def send(self, message):
-        fn = getattr(self.client, message.command)
+    def send(self, command, *args):
+        fn = getattr(self.client, command)
 
         if fn is not None:
-            err = fn(*message.args)
+            err = fn(*args)
 
             if isinstance(err, Exception):
-                message_error.send(message)
+                message_error.send('foo')
             else:
-                message_sent.send(message)
+                message_sent.send('foo')
 
 
 class CentClient(ClientContext):

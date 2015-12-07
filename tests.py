@@ -4,7 +4,7 @@ import unittest
 import mock
 
 from flask import Flask
-from flask_cent import CentClient, Publish, Unsubscribe, Disconnect
+from flask_cent import CentClient
 
 
 class TestCase(unittest.TestCase):
@@ -23,66 +23,27 @@ class TestCase(unittest.TestCase):
         self.ctx.pop()
 
 
-class TestPublish(TestCase):
-    def setUp(self):
-        self.msg = Publish('channel_id', { 'key': 'value' })
-
-    def test_initialize(self):
-        self.assertEquals(self.msg.args, ('channel_id', { 'key': 'value' }))
-
-    def test_command(self):
-        self.assertEquals(self.msg.command, 'publish')
-
-
-class TestDisconnect(TestCase):
-    def setUp(self):
-        self.msg = Disconnect('user_id')
-
-    def test_initialize(self):
-        self.assertEquals(self.msg.args, ('user_id',))
-
-    def test_command(self):
-        self.assertEquals(self.msg.command, 'disconnect')
-
-
-class TestUnsubscribe(TestCase):
-    def setUp(self):
-        self.msg = Unsubscribe('user_id')
-
-    def test_initialize(self):
-        self.assertEquals(self.msg.args, ('user_id',))
-
-    def test_command(self):
-        self.assertEquals(self.msg.command, 'unsubscribe')
-
-
 class TestCent(TestCase):
     def test_send_publish_message(self):
         with self.cent.record_messages() as messages:
             with mock.patch.object(self.cent, 'client') as client:
-                msg = Publish('channel_id', { 'key': 'value' })
-
-                self.cent.send(msg)
+                self.cent.publish("channel_id", key="value")
                 self.assertEquals(len(messages), 1)
 
-                client.publish.assert_called_once_with(*msg.args)
+                client.publish.assert_called_once_with("channel_id", {"key": "value"})
 
     def test_send_unsubscribe_message(self):
         with self.cent.record_messages() as messages:
             with mock.patch.object(self.cent, 'client') as client:
-                msg = Unsubscribe('user_id')
-
-                self.cent.send(msg)
+                self.cent.unsubscribe("user_id")
                 self.assertEquals(len(messages), 1)
 
-                client.unsubscribe.assert_called_once_with(*msg.args)
+                client.unsubscribe.assert_called_once_with("user_id")
 
     def test_send_disconnect_message(self):
         with self.cent.record_messages() as messages:
             with mock.patch.object(self.cent, 'client') as client:
-                msg = Disconnect('user_id')
-
-                self.cent.send(msg)
+                self.cent.disconnect("user_id")
                 self.assertEquals(len(messages), 1)
 
-                client.disconnect.assert_called_once_with(*msg.args)
+                client.disconnect.assert_called_once_with("user_id")
