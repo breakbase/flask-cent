@@ -61,10 +61,20 @@ class CentClient(ClientContext):
         self.app = app
 
         if app is not None:
-            self.init_cent_client(app.config, app.debug, app.testing)
+            self.init_app(self.app)
 
-            app.extensions = getattr(app, 'extensions', {})
-            app.extensions['cent'] = self.client
+    def init_app(self, app):
+        self.init_cent_client(app.config, app.debug, app.testing)
+
+        app.extensions = getattr(app, 'extensions', {})
+        app.extensions['cent'] = self.client
+
+    @property
+    def _app(self):
+        if self.app:
+            return self.app
+        else:
+            return current_app
 
     def init_cent_client(self, config, debug=False, testing=False):
         host = config.get('FLASK_CENT_HOST', 'localhost')

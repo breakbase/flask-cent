@@ -1,4 +1,4 @@
-Flask-Feature
+Flask-Cent
 =============
 
 This is a Flask extension for [centrifugal/cent](https://github.com/centrifugal/cent).
@@ -6,7 +6,7 @@ This is a Flask extension for [centrifugal/cent](https://github.com/centrifugal/
 ### Configuring your app
 
 ```python
-from flask.ext.cent_client import CentClient
+from flask.ext.cent import CentClient
 cent = CentClient(app)
 ```
 
@@ -20,9 +20,8 @@ cent.init_app(app)
 First create a message:
 
 ```python
-from flask_cent import Message
 
 @app.route("/")
 def index():
-    cent.send(Message('channel_id', { 'message': 'contents' }))
+    cent.publish("my\_channel\_id", key1='value1', key2='value2')
 ```
