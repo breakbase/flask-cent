@@ -42,7 +42,6 @@ class ClientContext(object):
         messages = []
 
         def record(message, **extras):
-            print message
             messages.append(message)
 
         message_sent.connect(record)
