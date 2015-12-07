@@ -3,11 +3,6 @@ from __future__ import with_statement
 import unittest
 import mock
 
-from contextlib import contextmanager
-
-from email.header import Header
-from email import charset
-
 from flask import Flask
 from flask_cent import CentClient, Publish, Unsubscribe, Disconnect
 
@@ -24,8 +19,9 @@ class TestCase(unittest.TestCase):
         self.ctx = self.app.test_request_context()
         self.ctx.push()
 
-    def teardown():
+    def teardown(self):
         self.ctx.pop()
+
 
 class TestPublish(TestCase):
     def setUp(self):
@@ -37,6 +33,7 @@ class TestPublish(TestCase):
     def test_command(self):
         self.assertEquals(self.msg.command, 'publish')
 
+
 class TestDisconnect(TestCase):
     def setUp(self):
         self.msg = Disconnect('user_id')
@@ -47,6 +44,7 @@ class TestDisconnect(TestCase):
     def test_command(self):
         self.assertEquals(self.msg.command, 'disconnect')
 
+
 class TestUnsubscribe(TestCase):
     def setUp(self):
         self.msg = Unsubscribe('user_id')
@@ -56,6 +54,7 @@ class TestUnsubscribe(TestCase):
 
     def test_command(self):
         self.assertEquals(self.msg.command, 'unsubscribe')
+
 
 class TestCent(TestCase):
     def test_send_publish_message(self):
@@ -87,4 +86,3 @@ class TestCent(TestCase):
                 self.assertEquals(len(messages), 1)
 
                 client.disconnect.assert_called_once_with(*msg.args)
-

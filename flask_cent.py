@@ -9,25 +9,29 @@ import logging
 
 from cent.core import Client as CentCoreClient
 
-from flask import current_app, _app_ctx_stack as stack
+from flask import current_app
 from contextlib import contextmanager
 
 __all__ = ['CentClient']
 
 log = logging.getLogger(__name__)
 
-class Message(object):
-     def __init__(self, *args):
-         self.args = args
 
-     def command():
-         return command
+class Message(object):
+    def __init__(self, *args):
+        self.args = args
+
+    def command(self):
+        return command
+
 
 class Unsubscribe(Message):
     command = 'unsubscribe'
 
+
 class Disconnect(Message):
     command = 'disconnect'
+
 
 class Publish(Message):
     command = 'publish'
@@ -51,6 +55,15 @@ class ClientContext(object):
         finally:
             message_sent.disconnect(record)
 
+    def publish(self, message):
+        pass
+
+    def subscribe(self, message):
+        pass
+
+    def unsubscribe(self, message):
+        pass
+
     def send(self, message):
         fn = getattr(self.client, message.command)
 
@@ -61,6 +74,7 @@ class ClientContext(object):
                 message_error.send(message)
             else:
                 message_sent.send(message)
+
 
 class CentClient(ClientContext):
     def __init__(self, app=None):
