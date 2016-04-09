@@ -11,8 +11,7 @@ class TestCase(unittest.TestCase):
     def setUp(self):
         self.app = Flask(__name__)
         self.app.config.from_object(self)
-        self.app.config['FLASH_CENT_SECRET'] = 'flask-cent-test-secret'
-        #self.app.config['FLASH_CENT_SECRET'] = 'development-secret'
+        self.app.config['FLASK_CENT_SECRET'] = 'flask-cent-test-secret'
 
         self.cent = CentClient(self.app)
 

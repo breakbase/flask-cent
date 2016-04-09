@@ -21,7 +21,7 @@ class ClientContext(object):
     @contextmanager
     def record_messages(self):
         if not message_sent: # signals required
-            raise RuntimeError("blicker must be installed")
+            raise RuntimeError("blinker must be installed")
 
         messages = []
 
@@ -80,7 +80,7 @@ class CentClient(ClientContext):
         host = config.get('FLASK_CENT_HOST', 'localhost')
         port = config.get('FLASK_CENT_PORT', '8000')
         protocol = config.get('FLASK_CENT_PROTOCOL', 'http')
-        secret = config.get('FLASH_CENT_SECRET', None)
+        secret = config.get('FLASK_CENT_SECRET', None)
 
         if secret is None:
             raise RuntimeError("secret is required")
