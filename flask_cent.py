@@ -27,7 +27,7 @@ class CentClient(object):
             self.state = self.init_app(self.app)
 
     def init_app(self, app):
-        self.init_cent_client(
+        self.client = self.make_cent_client(
             app.config.get('FLASK_CENT_HOST', 'localhost'),
             app.config.get('FLASK_CENT_PORT', '8000'),
             app.config.get('FLASK_CENT_PROTOCOL', 'http'),
@@ -44,12 +44,12 @@ class CentClient(object):
         else:
             return current_app
 
-    def init_cent_client(self, host, port, protocol, secret):
+    def make_cent_client(self, host, port, protocol, secret):
 
         if secret is None:
             raise RuntimeError("FLASK_CENT_SECRET is required")
 
-        self.client = CentCoreClient(
+        return CentCoreClient(
             "%s://%s:%s" % (protocol, host, port),
             secret
         )
