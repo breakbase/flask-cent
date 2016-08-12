@@ -6,7 +6,7 @@ This is a Flask extension for [centrifugal/cent](https://github.com/centrifugal/
 ### Configuring your app
 
 ```python
-from flask.ext.cent import CentClient
+from flask_cent import CentClient
 cent = CentClient(app)
 ```
 
