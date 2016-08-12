@@ -46,3 +46,12 @@ class TestCent(TestCase):
                 self.assertEquals(len(messages), 1)
 
                 client.disconnect.assert_called_once_with("user_id")
+
+    def test_suppress_messages(self):
+        self.app.config['FLASK_CENT_SUPPRESS'] = True
+        with self.cent.record_messages() as messages:
+            with mock.patch.object(self.cent, 'client') as client:
+                self.cent.disconnect("user_id")
+                self.assertEquals(len(messages), 1)
+
+                client.disconnect.assert_not_called()

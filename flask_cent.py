@@ -1,9 +1,3 @@
-__version_info__ = ('0', '1', '0')
-__version__ = '.'.join(__version_info__)
-__author__ = "BreakBase.com"
-__license__ = 'MIT'
-__copyright__ = "(c) 2015 by BreakBase.com"
-
 import blinker
 import logging
 
@@ -14,13 +8,56 @@ from contextlib import contextmanager
 
 __all__ = ['CentClient']
 
-log = logging.getLogger(__name__)
+__version_info__ = ('0', '1', '0')
+__version__ = '.'.join(__version_info__)
+__author__ = "BreakBase.com"
+__license__ = 'MIT'
+__copyright__ = "(c) 2015 by BreakBase.com"
+
+log = logging.getLogger('flask_cent')
 
 
-class ClientContext(object):
+class CentClient(object):
+
+    def __init__(self, app=None):
+        self.app = app
+        self.state = None
+
+        if app is not None:
+            self.state = self.init_app(self.app)
+
+    def init_app(self, app):
+        self.init_cent_client(
+            app.config.get('FLASK_CENT_HOST', 'localhost'),
+            app.config.get('FLASK_CENT_PORT', '8000'),
+            app.config.get('FLASK_CENT_PROTOCOL', 'http'),
+            app.config.get('FLASK_CENT_SECRET', None)
+        )
+
+        app.extensions = getattr(app, 'extensions', {})
+        app.extensions['cent'] = self.client
+
+    @property
+    def _app(self):
+        if self.app:
+            return self.app
+        else:
+            return current_app
+
+    def init_cent_client(self, host, port, protocol, secret):
+
+        if secret is None:
+            raise RuntimeError("FLASK_CENT_SECRET is required")
+
+        self.client = CentCoreClient(
+            "%s://%s:%s" % (protocol, host, port),
+            secret
+        )
+
     @contextmanager
     def record_messages(self):
-        if not message_sent: # signals required
+        # Ensure we can send signals.  Blinker is required
+        if not message_sent:
             raise RuntimeError("blinker must be installed")
 
         messages = []
@@ -48,44 +85,16 @@ class ClientContext(object):
         fn = getattr(self.client, command)
 
         if fn is not None:
-            err = fn(*args)
+            if not self._app.config.get('FLASK_CENT_SUPPRESS', False):
+                err = fn(*args)
 
-            if isinstance(err, Exception):
-                message_error.send('foo')
+                if isinstance(err, Exception):
+                    message_error.send('foo')
+                else:
+                    message_sent.send('foo')
             else:
                 message_sent.send('foo')
 
-
-class CentClient(ClientContext):
-    def __init__(self, app=None):
-        self.app = app
-
-        if app is not None:
-            self.init_app(self.app)
-
-    def init_app(self, app):
-        self.init_cent_client(app.config, app.debug, app.testing)
-
-        app.extensions = getattr(app, 'extensions', {})
-        app.extensions['cent'] = self.client
-
-    @property
-    def _app(self):
-        if self.app:
-            return self.app
-        else:
-            return current_app
-
-    def init_cent_client(self, config, debug=False, testing=False):
-        host = config.get('FLASK_CENT_HOST', 'localhost')
-        port = config.get('FLASK_CENT_PORT', '8000')
-        protocol = config.get('FLASK_CENT_PROTOCOL', 'http')
-        secret = config.get('FLASK_CENT_SECRET', None)
-
-        if secret is None:
-            raise RuntimeError("secret is required")
-
-        self.client = CentCoreClient("%s://%s:%s" % (protocol, host, port), secret)
 
 signals = blinker.Namespace()
 
