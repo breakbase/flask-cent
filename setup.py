@@ -30,6 +30,7 @@ setup(name='Flask-Cent',
       install_requires=[
           'Flask',
           'blinker',
+          'cent',
       ],
       tests_require=[
           'nose',
