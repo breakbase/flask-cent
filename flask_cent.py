@@ -34,7 +34,8 @@ class CentClient(object):
             app.config.get('FLASK_CENT_SECRET', None)
         )
 
-        app.extensions = getattr(app, 'extensions', {})
+        if not hasattr(app, 'extensions'):
+            app.extensions = {}
         app.extensions['cent'] = self.client
 
     @property
@@ -45,7 +46,6 @@ class CentClient(object):
             return current_app
 
     def make_cent_client(self, host, port, protocol, secret):
-
         if secret is None:
             raise RuntimeError("FLASK_CENT_SECRET is required")
 
