@@ -21,10 +21,9 @@ class CentClient(object):
 
     def __init__(self, app=None):
         self.app = app
-        self.state = None
 
         if app is not None:
-            self.state = self.init_app(self.app)
+            self.init_app(self.app)
 
     def init_app(self, app):
         self.client = self.make_cent_client(
@@ -36,7 +35,7 @@ class CentClient(object):
 
         if not hasattr(app, 'extensions'):
             app.extensions = {}
-        app.extensions['cent'] = self.client
+        app.extensions['cent'] = self
 
     @property
     def _app(self):
@@ -62,8 +61,8 @@ class CentClient(object):
 
         messages = []
 
-        def record(message, **extras):
-            messages.append(message)
+        def record(sender, command, params, **extras):
+            messages.append((command, params))
 
         message_sent.connect(record)
 
@@ -89,11 +88,11 @@ class CentClient(object):
                 err = fn(*args)
 
                 if isinstance(err, Exception):
-                    message_error.send('foo')
+                    message_error.send(current_app._get_current_object(), command=command, params=args)
                 else:
-                    message_sent.send('foo')
+                    message_sent.send(current_app._get_current_object(), command=command, params=args)
             else:
-                message_sent.send('foo')
+                message_sent.send(current_app._get_current_object(), command=command, params=args)
 
 
 signals = blinker.Namespace()
