@@ -88,8 +88,8 @@ class CentClient(object):
         return command, kwargs
 
     def batch_send(self, messages):
-        for message in messages:
-            self._send('add', message)
+        for command, params in messages:
+            self._send('add', command, params)
 
         return self._send('send')
 

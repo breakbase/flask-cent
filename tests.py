@@ -55,3 +55,12 @@ class TestCent(TestCase):
                 self.assertEquals(len(messages), 1)
 
                 client.disconnect.assert_not_called()
+
+    def test_batched_send(self):
+        with self.cent.record_messages() as messages:
+            with mock.patch.object(self.cent, 'client') as client:
+                self.cent.batch_send([('publish', {'banana': True})])
+                self.assertEquals(len(messages), 2)
+
+                client.add.assert_called_once()
+                client.send.assert_called_once()
