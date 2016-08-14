@@ -8,7 +8,7 @@ from contextlib import contextmanager
 
 __all__ = ['CentClient']
 
-__version_info__ = ('0', '1', '2')
+__version_info__ = ('0', '1', '3')
 __version__ = '.'.join(__version_info__)
 __author__ = "BreakBase.com"
 __license__ = 'MIT'
@@ -80,12 +80,8 @@ class CentClient(object):
     def unsubscribe(self, channel_id):
         return self._send('unsubscribe', channel_id)
 
-    def create_message(self, command, **kwargs):
-        """Create a message to use with `batch_send`.
-
-        This is just a simple helper method.
-        """
-        return command, kwargs
+    def create_publish_message(self, channel_id, **kwargs):
+        return ('publish', {'channel': channel_id, 'data': kwargs})
 
     def batch_send(self, messages):
         for command, params in messages:
