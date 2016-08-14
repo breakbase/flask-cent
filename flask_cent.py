@@ -8,7 +8,7 @@ from contextlib import contextmanager
 
 __all__ = ['CentClient']
 
-__version_info__ = ('0', '1', '1')
+__version_info__ = ('0', '1', '2')
 __version__ = '.'.join(__version_info__)
 __author__ = "BreakBase.com"
 __license__ = 'MIT'
